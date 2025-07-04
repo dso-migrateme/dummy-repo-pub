@@ -17,7 +17,7 @@ py==1.11.0
 pyparsing==3.0.9
 pytest==7.1.2
 pytest-bdd==6.0.1
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
 pytimeparse==1.1.8
 requests==2.28.1
 six==1.16.0
