@@ -1,0 +1,42 @@
+name: Testing
+run-name: "Testing123"
+
+on:
+  workflow_dispatch: {}
+  push: # used for testing of this repo. Ignored in Required workflow
+    branches:
+      - '**' # Alternatively hardcode "main" instead of "if"s
+
+jobs:
+  run:
+    name: Run
+    continue-on-error: true
+    runs-on: ubuntu-24.04
+    container:
+      image: ubuntu
+    steps:
+      - uses: actions/checkout@v4
+      - name: Identify the last Committer
+        run: |
+          echo "run"
+
+  notify:
+    name: Notify  
+    runs-on: ubuntu-latest
+    steps:
+      - name: Failing step
+        id: failing
+        run: exit 1
+      - name: Non-failing step
+        id: non-failing
+        run: echo "Non-failing step"
+      - name: Notify in Slack on failure
+        if: failure()
+        uses: nautilus-wraith/securesdlc-helpers/.github/actions/healthcheck@release-stable
+        with:
+          github_workflow: ${{ github.workflow }}
+          github_repository: ${{ github.repository }}
+          github_run_id: ${{ github.run_id }}
+          step_conclusion: ${{ steps.failing.conclusion }}
+          slack_webhook: ${{ secrets.SDLC_SLACK_NOTIFICATIONS }}
+
